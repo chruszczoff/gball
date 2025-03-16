@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+#score, #timer, #countdown, #legend {
+    font-family: Arial, sans-serif;
+    text-shadow: 1px 1px 2px black;
+    color: #ffffff;
+}
+
+#crosshair {
+    font-family: Arial, sans-serif;
+    text-shadow: 1px 1px 2px black;
+    color: #ffffff;
+}
+
+#menu {
+    font-family: Arial, sans-serif;
+    z-index: 10;
+}
+
+#startButton:hover {
+    background: #555;
+    color: white;
+}
+
+#legend {
+    z-index: 5;
+}
