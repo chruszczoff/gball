@@ -2,20 +2,44 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Paintball 3D</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="menu" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center;">
-        <button id="startButton" style="font-size: 30px; padding: 20px; cursor: pointer;">Graj</button>
+    <div id="menu" class="menu">
+        <h1>Paintball 3D</h1>
+        <button class="mapButton" data-map="factory">Fabryka</button>
+        <button class="mapButton" data-map="forest">Las</button>
+        <button class="mapButton" data-map="city">Opuszczone Miasto</button>
+        <button class="mapButton" data-map="arena">Arena Sportowa</button>
+        <button class="mapButton" data-map="space">Kosmos</button>
     </div>
-    <div id="countdown" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 50px; display: none;"></div>
-    <div id="legend" style="position: absolute; top: 0; left: 0; width: 100%; background: rgba(0, 0, 0, 0.7); color: white; text-align: center; padding: 5px; font-size: 16px; display: none;">
-        WASD - Ruch | Spacja - Skok | LPM - Strzał | 1/2 - Zmiana broni | V - Zmiana widoku | Zielony - Szybkie strzelanie | Niebieski - Większe kule | Cyjan - Tarcza
+    <div id="countdown" class="countdown"></div>
+    <div id="legend" class="legend">
+        <div>WASD - Ruch</div>
+        <div>Spacja - Skok</div>
+        <div>LPM - Strzał</div>
+        <div>1/2 - Zmiana broni</div>
+        <div>V - Zmiana widoku</div>
+        <div><span style="color: #00ff00;">●</span> Zielony - Szybkie strzelanie</div>
+        <div><span style="color: #0000ff;">●</span> Niebieski - Większe kule</div>
+        <div><span style="color: #00ffff;">●</span> Cyjan - Tarcza</div>
     </div>
-    <div id="score" style="position: absolute; top: 40px; left: 10px; color: white; font-size: 20px; display: none;">Punkty: 0</div>
-    <div id="timer" style="position: absolute; top: 40px; right: 10px; color: white; font-size: 20px; display: none;">Czas: 180</div>
-    <div id="crosshair" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 20px; pointer-events: none; display: none;">+</div>
+    <div id="score" class="score">Punkty: 0</div>
+    <div id="timer" class="timer">Czas: 180</div>
+    <div id="crosshair" class="crosshair">+</div>
+
+    <!-- Sterowanie dotykowe -->
+    <div id="touchControls" class="touch-controls">
+        <div id="joystickLeft" class="joystick"></div>
+        <div id="joystickRight" class="joystick"></div>
+        <button id="jumpButton" class="touch-button">Skok</button>
+        <button id="shootButton" class="touch-button">Strzał</button>
+        <button id="weaponButton" class="touch-button">Broń</button>
+        <button id="viewButton" class="touch-button">Widok</button>
+    </div>
+
     <audio id="shootSound" src="https://www.soundjay.com/buttons/sounds/gunshot-01.mp3"></audio>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="script.js"></script>

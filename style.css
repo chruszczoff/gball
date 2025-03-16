@@ -2,30 +2,172 @@ body {
     margin: 0;
     overflow: hidden;
     background: #000;
+    touch-action: none; /* Wyłącza domyślne gesty przeglądarki */
 }
 
-#score, #timer, #countdown, #legend {
+.menu, .countdown, .legend, .score, .timer, .crosshair {
     font-family: Arial, sans-serif;
     text-shadow: 1px 1px 2px black;
     color: #ffffff;
 }
 
-#crosshair {
-    font-family: Arial, sans-serif;
-    text-shadow: 1px 1px 2px black;
-    color: #ffffff;
-}
-
-#menu {
-    font-family: Arial, sans-serif;
+.menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     z-index: 10;
 }
 
-#startButton:hover {
+.menu h1 {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.mapButton {
+    font-size: 20px;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.mapButton:hover {
     background: #555;
     color: white;
 }
 
-#legend {
+.countdown {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    display: none;
+}
+
+.legend {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 200px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    font-size: 16px;
+    display: none;
+    text-align: left;
+    line-height: 1.5;
     z-index: 5;
+}
+
+.score {
+    position: absolute;
+    top: 40px;
+    left: 220px;
+    font-size: 20px;
+    display: none;
+}
+
+.timer {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    font-size: 20px;
+    display: none;
+}
+
+.crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    pointer-events: none;
+    display: none;
+}
+
+/* Sterowanie dotykowe */
+.touch-controls {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.joystick {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 20px;
+    pointer-events: auto;
+}
+
+#joystickLeft {
+    left: 20px;
+}
+
+#joystickRight {
+    right: 20px;
+}
+
+.touch-button {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 16px;
+    position: absolute;
+    bottom: 120px;
+    pointer-events: auto;
+}
+
+#jumpButton {
+    right: 120px;
+}
+
+#shootButton {
+    right: 60px;
+}
+
+#weaponButton {
+    right: 180px;
+}
+
+#viewButton {
+    right: 240px;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .menu h1 {
+        font-size: 30px;
+    }
+    .mapButton {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+    .legend {
+        width: 150px;
+        font-size: 14px;
+    }
+    .score {
+        left: 170px;
+        font-size: 16px;
+    }
+    .timer {
+        font-size: 16px;
+    }
+    .touch-controls {
+        display: block;
+    }
 }

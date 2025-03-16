@@ -18,44 +18,105 @@ scene.add(ambientLight);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
 directionalLight.position.set(10, 20, 10);
 directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.width = 1024;
-directionalLight.shadow.mapSize.height = 1024;
-directionalLight.shadow.camera.near = 0.5;
-directionalLight.shadow.camera.far = 50;
+directionalLight.shadow.mapSize.width = 512; // Zmniejszono dla wydajności
+directionalLight.shadow.mapSize.height = 512;
 scene.add(directionalLight);
-
-// Skybox
-const skyboxLoader = new THREE.CubeTextureLoader();
-const skyboxTexture = skyboxLoader.load([
-    'https://threejs.org/examples/textures/skyboxsun25deg/px.jpg',
-    'https://threejs.org/examples/textures/skyboxsun25deg/nx.jpg',
-    'https://threejs.org/examples/textures/skyboxsun25deg/py.jpg',
-    'https://threejs.org/examples/textures/skyboxsun25deg/ny.jpg',
-    'https://threejs.org/examples/textures/skyboxsun25deg/pz.jpg',
-    'https://threejs.org/examples/textures/skyboxsun25deg/nz.jpg'
-]);
-scene.background = skyboxTexture;
 
 // Tekstury
 const textureLoader = new THREE.TextureLoader();
-const groundTexture = textureLoader.load('https://threejs.org/examples/textures/terrain/grasslight-big.jpg');
-groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
-groundTexture.repeat.set(10, 10);
-const boxTexture = textureLoader.load('https://threejs.org/examples/textures/crate.gif');
-const wallTexture = textureLoader.load('https://threejs.org/examples/textures/brick_diffuse.jpg');
+const groundTextures = {
+    factory: textureLoader.load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg'),
+    forest: textureLoader.load('https://threejs.org/examples/textures/terrain/grasslight-big.jpg'),
+    city: textureLoader.load('https://threejs.org/examples/textures/terrain/roughness_map.jpg'),
+    arena: textureLoader.load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg'),
+    space: textureLoader.load('https://threejs.org/examples/textures/lava/lavatile.jpg')
+};
+Object.values(groundTextures).forEach(tex => {
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(10, 10);
+});
+const wallTextures = {
+    factory: textureLoader.load('https://threejs.org/examples/textures/brick_diffuse.jpg'),
+    forest: textureLoader.load('https://threejs.org/examples/textures/water/Water_1_M_Normal.jpg'),
+    city: textureLoader.load('https://threejs.org/examples/textures/brick_roughness.jpg'),
+    arena: textureLoader.load('https://threejs.org/examples/textures/uv_grid_opengl.jpg'),
+    space: textureLoader.load('https://threejs.org/examples/textures/metal/Metal_Corrugated_001_basecolor.jpg')
+};
+const boxTextures = {
+    factory: textureLoader.load('https://threejs.org/examples/textures/crate.gif'),
+    forest: textureLoader.load('https://threejs.org/examples/textures/wood/wood_box.jpg'),
+    city: textureLoader.load('https://threejs.org/examples/textures/brick_diffuse.jpg'),
+    arena: textureLoader.load('https://threejs.org/examples/textures/uv_grid_opengl.jpg'),
+    space: textureLoader.load('https://threejs.org/examples/textures/metal/Metal_Grid_002_basecolor.jpg')
+};
 const enemyTexture = textureLoader.load('https://threejs.org/examples/textures/lava/lavatile.jpg');
+
+// Skyboxy
+const skyboxLoader = new THREE.CubeTextureLoader();
+const skyboxes = {
+    factory: skyboxLoader.load([
+        'https://threejs.org/examples/textures/cube/Bridge2/posx.jpg',
+        'https://threejs.org/examples/textures/cube/Bridge2/negx.jpg',
+        'https://threejs.org/examples/textures/cube/Bridge2/posy.jpg',
+        'https://threejs.org/examples/textures/cube/Bridge2/negy.jpg',
+        'https://threejs.org/examples/textures/cube/Bridge2/posz.jpg',
+        'https://threejs.org/examples/textures/cube/Bridge2/negz.jpg'
+    ]),
+    forest: skyboxLoader.load([
+        'https://threejs.org/examples/textures/skyboxsun25deg/px.jpg',
+        'https://threejs.org/examples/textures/skyboxsun25deg/nx.jpg',
+        'https://threejs.org/examples/textures/skyboxsun25deg/py.jpg',
+        'https://threejs.org/examples/textures/skyboxsun25deg/ny.jpg',
+        'https://threejs.org/examples/textures/skyboxsun25deg/pz.jpg',
+        'https://threejs.org/examples/textures/skyboxsun25deg/nz.jpg'
+    ]),
+    city: skyboxLoader.load([
+        'https://threejs.org/examples/textures/cube/MilkyWay/posx.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/negx.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/posy.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/negy.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/posz.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/negz.jpg'
+    ]),
+    arena: skyboxLoader.load([
+        'https://threejs.org/examples/textures/cube/pisa/px.jpg',
+        'https://threejs.org/examples/textures/cube/pisa/nx.jpg',
+        'https://threejs.org/examples/textures/cube/pisa/py.jpg',
+        'https://threejs.org/examples/textures/cube/pisa/ny.jpg',
+        'https://threejs.org/examples/textures/cube/pisa/pz.jpg',
+        'https://threejs.org/examples/textures/cube/pisa/nz.jpg'
+    ]),
+    space: skyboxLoader.load([
+        'https://threejs.org/examples/textures/cube/MilkyWay/posx.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/negx.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/posy.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/negy.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/posz.jpg',
+        'https://threejs.org/examples/textures/cube/MilkyWay/negz.jpg'
+    ])
+};
+
+// Definicje map
+let currentMap = 'factory';
+const maps = {
+    factory: { ground: groundTextures.factory, wall: wallTextures.factory, box: boxTextures.factory, skybox: skyboxes.factory },
+    forest: { ground: groundTextures.forest, wall: wallTextures.forest, box: boxTextures.forest, skybox: skyboxes.forest },
+    city: { ground: groundTextures.city, wall: wallTextures.city, box: boxTextures.city, skybox: skyboxes.city },
+    arena: { ground: groundTextures.arena, wall: wallTextures.arena, box: boxTextures.arena, skybox: skyboxes.arena },
+    space: { ground: groundTextures.space, wall: wallTextures.space, box: boxTextures.space, skybox: skyboxes.space }
+};
 
 // Podłoże
 const groundGeometry = new THREE.PlaneGeometry(50, 50);
-const groundMaterial = new THREE.MeshStandardMaterial({ map: groundTexture });
-const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+let groundMaterial = new THREE.MeshStandardMaterial({ map: maps[currentMap].ground });
+let ground = new THREE.Mesh(groundGeometry, groundMaterial);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
 // Ściany
 const wallGeometry = new THREE.BoxGeometry(50, 10, 1);
-const wallMaterial = new THREE.MeshStandardMaterial({ map: wallTexture });
+let wallMaterial = new THREE.MeshStandardMaterial({ map: maps[currentMap].wall });
 const walls = [
     new THREE.Mesh(wallGeometry, wallMaterial),
     new THREE.Mesh(wallGeometry, wallMaterial),
@@ -111,7 +172,7 @@ function spawnEnemy() {
     enemy.add(rightArm);
     enemy.add(leftLeg);
     enemy.add(rightLeg);
-    enemy.position.set(Math.random() * 40 - 20, 0, Math.random() * 40 - 20); // Szerszy spawn
+    enemy.position.set(Math.random() * 40 - 20, 0, Math.random() * 40 - 20);
     enemy.lastShotTime = 0;
     enemy.animationTime = 0;
     enemies.push(enemy);
@@ -122,12 +183,11 @@ function spawnEnemy() {
 function enemyShoot(enemy) {
     const now = performance.now();
     if (now - enemy.lastShotTime < 2000) return;
-    const bulletGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+    const bulletGeometry = new THREE.SphereGeometry(0.1, 8, 8); // Zmniejszono detale
     const bulletMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
     const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
     bullet.position.copy(enemy.position);
     bullet.position.y += 1.15;
-
     const target = Math.random() < 0.5 && enemies.length > 1 ? 
         enemies[Math.floor(Math.random() * enemies.length)] : camera;
     if (target === enemy) return;
@@ -142,10 +202,10 @@ function enemyShoot(enemy) {
 
 // Efekt wybuchu
 function createExplosion(position) {
-    const particleCount = 10;
+    const particleCount = 5; // Zmniejszono dla wydajności
     const particles = [];
     for (let i = 0; i < particleCount; i++) {
-        const particleGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+        const particleGeometry = new THREE.SphereGeometry(0.1, 4, 4); // Zmniejszono detale
         const particleMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
         const particle = new THREE.Mesh(particleGeometry, particleMaterial);
         particle.position.copy(position);
@@ -162,14 +222,14 @@ function createExplosion(position) {
 
 // Przeszkody (skrzynie)
 const boxGeometry = new THREE.BoxGeometry(2, 2, 2);
-const boxMaterial = new THREE.MeshStandardMaterial({ map: boxTexture });
+let boxMaterial = new THREE.MeshStandardMaterial({ map: maps[currentMap].box });
 const boxes = [];
 function spawnBoxes() {
     boxes.forEach(box => scene.remove(box));
     boxes.length = 0;
-    for (let i = 0; i < 20; i++) { // Zwiększono do 20
+    for (let i = 0; i < 15; i++) { // Zmniejszono do 15 dla wydajności
         const box = new THREE.Mesh(boxGeometry, boxMaterial);
-        box.position.set(Math.random() * 48 - 24, 1, Math.random() * 48 - 24); // Cała mapa
+        box.position.set(Math.random() * 48 - 24, 1, Math.random() * 48 - 24);
         box.castShadow = true;
         box.receiveShadow = true;
         boxes.push(box);
@@ -180,13 +240,13 @@ function spawnBoxes() {
 // Power-upy
 const powerUps = [];
 function spawnPowerUp() {
-    const powerUpGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+    const powerUpGeometry = new THREE.SphereGeometry(0.5, 8, 8); // Zmniejszono detale
     const type = Math.random() < 0.33 ? 'rapidFire' : Math.random() < 0.66 ? 'bigBullets' : 'shield';
     const powerUpMaterial = new THREE.MeshStandardMaterial({ 
         color: type === 'rapidFire' ? 0x00ff00 : type === 'bigBullets' ? 0x0000ff : 0x00ffff 
     });
     const powerUp = new THREE.Mesh(powerUpGeometry, powerUpMaterial);
-    powerUp.position.set(Math.random() * 48 - 24, 0.5, Math.random() * 48 - 24); // Cała mapa
+    powerUp.position.set(Math.random() * 48 - 24, 0.5, Math.random() * 48 - 24);
     powerUp.type = type;
     powerUp.castShadow = true;
     powerUps.push(powerUp);
@@ -195,12 +255,20 @@ function spawnPowerUp() {
 
 // Menu i elementy UI
 const menu = document.getElementById('menu');
-const startButton = document.getElementById('startButton');
+const mapButtons = document.getElementsByClassName('mapButton');
 const scoreDisplay = document.getElementById('score');
 const timerDisplay = document.getElementById('timer');
 const countdownDisplay = document.getElementById('countdown');
 const legendDisplay = document.getElementById('legend');
 const crosshair = document.getElementById('crosshair');
+const touchControls = document.getElementById('touchControls');
+const joystickLeft = document.getElementById('joystickLeft');
+const joystickRight = document.getElementById('joystickRight');
+const jumpButton = document.getElementById('jumpButton');
+const shootButton = document.getElementById('shootButton');
+const weaponButton = document.getElementById('weaponButton');
+const viewButton = document.getElementById('viewButton');
+
 let gameStarted = false;
 let countdownActive = false;
 let timeLeft = 180;
@@ -208,18 +276,98 @@ let powerUpTimer = 0;
 let shieldActive = false;
 let isThirdPerson = false;
 
-startButton.addEventListener('click', () => {
+// Sterowanie dotykowe
+let moveJoystick = { active: false, x: 0, y: 0, startX: 0, startY: 0 };
+let lookJoystick = { active: false, x: 0, y: 0, startX: 0, startY: 0 };
+
+joystickLeft.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    moveJoystick.active = true;
+    moveJoystick.startX = e.touches[0].clientX;
+    moveJoystick.startY = e.touches[0].clientY;
+});
+joystickLeft.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (moveJoystick.active) {
+        moveJoystick.x = (e.touches[0].clientX - moveJoystick.startX) / 40;
+        moveJoystick.y = (e.touches[0].clientY - moveJoystick.startY) / 40;
+        moveJoystick.x = Math.max(-1, Math.min(1, moveJoystick.x));
+        moveJoystick.y = Math.max(-1, Math.min(1, moveJoystick.y));
+    }
+});
+joystickLeft.addEventListener('touchend', () => {
+    moveJoystick.active = false;
+    moveJoystick.x = 0;
+    moveJoystick.y = 0;
+});
+
+joystickRight.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    lookJoystick.active = true;
+    lookJoystick.startX = e.touches[0].clientX;
+    lookJoystick.startY = e.touches[0].clientY;
+});
+joystickRight.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (lookJoystick.active) {
+        lookJoystick.x = (e.touches[0].clientX - lookJoystick.startX) * 0.002;
+        lookJoystick.y = (e.touches[0].clientY - lookJoystick.startY) * 0.002;
+    }
+});
+joystickRight.addEventListener('touchend', () => {
+    lookJoystick.active = false;
+    lookJoystick.x = 0;
+    lookJoystick.y = 0;
+});
+
+jumpButton.addEventListener('touchstart', () => {
+    if (!isJumping) {
+        isJumping = true;
+        jumpVelocity = 0.5;
+    }
+});
+
+shootButton.addEventListener('touchstart', () => {
+    if (!rapidFire) shoot();
+});
+
+weaponButton.addEventListener('touchstart', () => {
+    bulletColor = bulletColor === 0x00ff00 ? 0x0000ff : 0x00ff00;
+});
+
+viewButton.addEventListener('touchstart', () => {
+    toggleCameraView();
+});
+
+Array.from(mapButtons).forEach(button => {
+    button.addEventListener('click', () => {
+        currentMap = button.getAttribute('data-map');
+        startGame();
+    });
+});
+
+function startGame() {
     menu.style.display = 'none';
     countdownDisplay.style.display = 'block';
     legendDisplay.style.display = 'block';
     countdownActive = true;
     let countdown = 5;
     camera.position.set(0, 2, 5);
+
+    scene.background = maps[currentMap].skybox;
+    groundMaterial.map = maps[currentMap].ground;
+    groundMaterial.needsUpdate = true;
+    wallMaterial.map = maps[currentMap].wall;
+    wallMaterial.needsUpdate = true;
+    boxMaterial.map = maps[currentMap].box;
+    boxMaterial.needsUpdate = true;
+
     enemies.forEach(enemy => scene.remove(enemy));
     enemies.length = 0;
     for (let i = 0; i < 5; i++) spawnEnemy();
     spawnBoxes();
     spawnPowerUp();
+
     const countdownInterval = setInterval(() => {
         countdownDisplay.textContent = countdown;
         countdown--;
@@ -229,14 +377,14 @@ startButton.addEventListener('click', () => {
             scoreDisplay.style.display = 'block';
             timerDisplay.style.display = 'block';
             crosshair.style.display = 'block';
-            document.body.requestPointerLock();
+            if (window.innerWidth > 768) document.body.requestPointerLock();
             gameStarted = true;
             countdownActive = false;
             timeLeft = 180;
             timerDisplay.textContent = `Czas: ${Math.ceil(timeLeft)}`;
         }
     }, 1000);
-});
+}
 
 // Ruch gracza
 const moveSpeed = 0.1;
@@ -266,20 +414,19 @@ document.addEventListener('keyup', (event) => {
 
 // Celowanie myszą
 let mouseX = 0, mouseY = 0;
-document.body.requestPointerLock = document.body.requestPointerLock || document.body.mozRequestPointerLock;
 document.addEventListener('mousemove', (event) => {
-    if (document.pointerLockElement === document.body || document.mozPointerLockElement === document.body) {
+    if (document.pointerLockElement === document.body) {
         mouseX -= event.movementX * 0.002;
         mouseY -= event.movementY * 0.002;
         mouseY = Math.max(-0.5, Math.min(0.5, mouseY));
-        camera.rotation.order = 'YXZ';
-        camera.rotation.y = mouseX;
-        camera.rotation.x = mouseY;
     }
 });
 
-// Zmiana widoku kamery
-let baseCameraPosition = new THREE.Vector3(0, 2, 5);
+document.addEventListener('mousedown', () => {
+    if (!gameStarted || rapidFire) return;
+    shoot();
+});
+
 function toggleCameraView() {
     isThirdPerson = !isThirdPerson;
     if (isThirdPerson) {
@@ -288,7 +435,7 @@ function toggleCameraView() {
     } else {
         camera.position.copy(baseCameraPosition);
     }
-    document.body.requestPointerLock();
+    if (window.innerWidth > 768) document.body.requestPointerLock();
 }
 
 // Strzelanie gracza
@@ -297,13 +444,8 @@ let bulletColor = 0x00ff00;
 let rapidFire = false, bigBullets = false, bulletSize = 0.1;
 let lastShot = 0;
 
-document.addEventListener('keydown', (event) => {
-    if (event.key === '1') bulletColor = 0x00ff00;
-    if (event.key === '2') bulletColor = 0x0000ff;
-});
-
 function shoot() {
-    const bulletGeometry = new THREE.SphereGeometry(bulletSize, 16, 16);
+    const bulletGeometry = new THREE.SphereGeometry(bulletSize, 8, 8); // Zmniejszono detale
     const bulletMaterial = new THREE.MeshStandardMaterial({ color: bulletColor });
     const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
     bullet.position.copy(camera.position);
@@ -315,11 +457,6 @@ function shoot() {
     shootSound.currentTime = 0;
     shootSound.play();
 }
-
-document.addEventListener('mousedown', () => {
-    if (!gameStarted || rapidFire) return;
-    shoot();
-});
 
 function activatePowerUp(type) {
     console.log(`Aktywowano power-up: ${type}`);
@@ -339,7 +476,7 @@ function activatePowerUp(type) {
 // Licznik punktów
 let score = 0;
 
-// Kolizje (skrzynie i ściany dla gracza)
+// Kolizje
 function checkCollision(newPosition, height) {
     const playerSize = 0.5;
     for (let box of boxes) {
@@ -360,7 +497,6 @@ function checkCollision(newPosition, height) {
     return false;
 }
 
-// Kolizje dla przeciwników
 function checkEnemyCollision(enemy, newPosition) {
     const enemySize = 0.6;
     for (let box of boxes) {
@@ -373,7 +509,8 @@ function checkEnemyCollision(enemy, newPosition) {
     return false;
 }
 
-// Animacja i aktualizacja
+// Animacja
+let baseCameraPosition = new THREE.Vector3(0, 2, 5);
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
@@ -381,15 +518,15 @@ function animate() {
     if (countdownActive) return;
     if (!gameStarted) return;
 
-    // Ruch gracza
+    // Ruch gracza (klawiatura lub joystick)
     const newPosition = camera.position.clone();
     const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
     const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
 
-    if (moveForward) newPosition.add(forward.clone().multiplyScalar(moveSpeed));
-    if (moveBackward) newPosition.sub(forward.clone().multiplyScalar(moveSpeed));
-    if (moveLeft) newPosition.sub(right.clone().multiplyScalar(moveSpeed));
-    if (moveRight) newPosition.add(right.clone().multiplyScalar(moveSpeed));
+    if (moveForward || moveJoystick.y < -0.2) newPosition.add(forward.clone().multiplyScalar(moveSpeed));
+    if (moveBackward || moveJoystick.y > 0.2) newPosition.sub(forward.clone().multiplyScalar(moveSpeed));
+    if (moveLeft || moveJoystick.x < -0.2) newPosition.sub(right.clone().multiplyScalar(moveSpeed));
+    if (moveRight || moveJoystick.x > 0.2) newPosition.add(right.clone().multiplyScalar(moveSpeed));
 
     if (!checkCollision(newPosition, camera.position.y)) {
         camera.position.x = newPosition.x;
@@ -408,7 +545,17 @@ function animate() {
         }
     }
 
-    // Ruch, strzelanie i animacja przeciwników
+    // Celowanie (mysz lub joystick)
+    if (lookJoystick.active) {
+        mouseX -= lookJoystick.x;
+        mouseY -= lookJoystick.y;
+        mouseY = Math.max(-0.5, Math.min(0.5, mouseY));
+    }
+    camera.rotation.order = 'YXZ';
+    camera.rotation.y = mouseX;
+    camera.rotation.x = mouseY;
+
+    // Wrogowie
     enemies.forEach(enemy => {
         const target = Math.random() < 0.5 && enemies.length > 1 ? 
             enemies[Math.floor(Math.random() * enemies.length)] : camera;
@@ -419,10 +566,9 @@ function animate() {
                 enemy.position.copy(newEnemyPosition);
                 enemy.position.y = 0;
             }
-            // Rotacja głowy w stronę celu
             const head = enemy.children[0];
             head.lookAt(target.position);
-            head.rotation.x = 0; // Blokada rotacji w pionie
+            head.rotation.x = 0;
             head.rotation.z = 0;
         }
         if (enemy.position.x > 24 || enemy.position.x < -24 || enemy.position.z > 24 || enemy.position.z < -24) {
@@ -432,7 +578,6 @@ function animate() {
         }
         enemyShoot(enemy);
 
-        // Animacja rąk i nóg
         enemy.animationTime += 0.1;
         const leftArm = enemy.children[2];
         const rightArm = enemy.children[3];
@@ -444,20 +589,19 @@ function animate() {
         rightLeg.rotation.z = Math.sin(enemy.animationTime) * 0.5;
     });
 
-    // Szybkie strzelanie gracza
+    // Szybkie strzelanie
     if (rapidFire && performance.now() - lastShot > 100) {
         shoot();
         lastShot = performance.now();
     }
 
-    // Spawn power-upów co 15 sekund
+    // Power-upy
     powerUpTimer += 1 / 60;
     if (powerUpTimer >= 15) {
         spawnPowerUp();
         powerUpTimer = 0;
     }
 
-    // Sprawdzanie power-upów
     powerUps.forEach((powerUp, index) => {
         const distance = camera.position.distanceTo(powerUp.position);
         if (distance < 2) {
@@ -467,7 +611,7 @@ function animate() {
         }
     });
 
-    // Ruch kul i sprawdzanie trafień
+    // Kule i trafienia
     scene.children.forEach(child => {
         if (child.velocity) {
             child.position.add(child.velocity.clone().multiplyScalar(0.1));
@@ -510,7 +654,7 @@ function animate() {
         }
     });
 
-    // Timer i koniec gry
+    // Timer
     if (timeLeft > 0) {
         timeLeft -= 1 / 60;
         timerDisplay.textContent = `Czas: ${Math.ceil(timeLeft)}`;
